@@ -5,7 +5,7 @@ import { verifyEmail, verifyMinLength, verifyString } from "../helpers/validatio
 import User from "../models/user.model.js"
 import bcrypt from 'bcrypt'
 import jsonwebtoken from 'jsonwebtoken'
-
+import nodemailer from "nodemailer"
 
 export const registerController = async (req, res) => {
     try{
