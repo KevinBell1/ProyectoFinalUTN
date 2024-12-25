@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import ENVIROMENT from "./enviroment.js";
 
-const MONGO_URL = 'mongodb+srv://admin:xzMNHwckiSzYZ7T@cluster0.907t1.mongodb.net/DATA_BASE_FINAL_PROYECT';
+const MONGO_URL = ENVIROMENT.MONGO_DB.MONGO_DB_CONNECTION_STR + '/' + ENVIROMENT.MONGO_DB.MONGO_DB_DATABASE
 
 mongoose.connect(MONGO_URL, {})
 .then(
