@@ -53,6 +53,29 @@ export const registerController = async (req, res) => {
         return res.json(response)
     }
 
+    const hashedPassword = await bcrypt.hash(registerConfig.password.value, 10)
+    const validation_token = jsonwebtoken.sign({
+        email: registerConfig.email.value
+    },
+    ENVIROMENT.SECRET_KEY,
+    {
+        expiresIn: '1d'
+    }
+    
+    )
+
+    const redirectUrl = `${ENVIROMENT.URL_FRONTEND}/api/auth/verify-email/` + validation_token
+
+    const result = await transporterEmail.sendMail({
+        subject: 'Valida tu email',
+        to: registerConfig.email.value,
+        html: `
+        <h1>Valida tu mail</h1>
+        <p>Para validar tu mail haz click en <a href= "${redirectUrl}">Este enlace</a></p>
+        `
+    })
+
+
     const userCreated = new User({name: registerConfig.name.value , email: registerConfig.email.value, password: hashedPassword, verificationToken: ''}) 
     await userCreated.save()
 
