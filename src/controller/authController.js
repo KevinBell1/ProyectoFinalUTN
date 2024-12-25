@@ -1,5 +1,6 @@
 import ResponseBuilder from "../helpers/builders/response.builder.js"
 import { verifyEmail, verifyMinLength, verifyString } from "../helpers/validation.helpers.js"
+import User from "../models/user.model.js"
 
 
 export const registerController = async (req, res) => {
