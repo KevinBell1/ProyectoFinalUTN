@@ -108,9 +108,9 @@ export const registerController = async (req, res) => {
         .setCode(error.code)
         .setOk(false)
         .setStatus(500)
-        .setData(
-            error.message
-        )
+        .setData({
+            message: 'Error de catch' + error
+        })
         .build()
         return res.json(response)
     }
