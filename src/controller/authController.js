@@ -1,6 +1,10 @@
+import ENVIROMENT from "../config/enviroment.js"
+import transporterEmail from "../helpers/builders/emailTransporter.js"
 import ResponseBuilder from "../helpers/builders/response.builder.js"
 import { verifyEmail, verifyMinLength, verifyString } from "../helpers/validation.helpers.js"
 import User from "../models/user.model.js"
+import bcrypt from 'bcrypt'
+import jsonwebtoken from 'jsonwebtoken'
 
 
 export const registerController = async (req, res) => {
@@ -64,7 +68,7 @@ export const registerController = async (req, res) => {
     
     )
 
-    const redirectUrl = `${ENVIROMENT.URL_FRONTEND}/api/auth/verify-email/` + validation_token
+    const redirectUrl = `${ENVIROMENT.URL_FRONTED}/api/auth/verify-email/` + validation_token
 
     const result = await transporterEmail.sendMail({
         subject: 'Valida tu email',
