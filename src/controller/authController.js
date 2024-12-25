@@ -3,7 +3,8 @@ import { verifyEmail, verifyMinLength, verifyString } from "../helpers/validatio
 
 
 export const registerController = async (req, res) => {
-    const {name, email, password} = req.body
+    try{
+        const {name, email, password} = req.body
     const registerConfig = {
         name: {
             value: name,
@@ -63,5 +64,27 @@ export const registerController = async (req, res) => {
     )
     .build()
     return res.json(response)
+    }catch(error){
+        if(error.code === 11000){
+            const response = new ResponseBuilder()
+            .setCode(error.code)
+            .setOk(false)
+            .setStatus(500)
+            .setData(
+                {message: 'El mail ya esta registrado'}
+            )
+            .build()
+            return res.json(response)
+        }
+        const response = new ResponseBuilder()
+        .setCode(error.code)
+        .setOk(false)
+        .setStatus(500)
+        .setData(
+            error.message
+        )
+        .build()
+        return res.json(response)
+    }
 }
 
