@@ -1,11 +1,9 @@
 import ENVIROMENT from "../config/enviroment.js"
-import transporterEmail from "../helpers/builders/emailTransporter.js"
 import ResponseBuilder from "../helpers/builders/response.builder.js"
 import { verifyEmail, verifyMinLength, verifyString } from "../helpers/validation.helpers.js"
 import User from "../models/user.model.js"
 import bcrypt from 'bcrypt'
-import jsonwebtoken from 'jsonwebtoken'
-import nodemailer from "nodemailer"
+
 
 export const registerController = async (req, res) => {
     try{
