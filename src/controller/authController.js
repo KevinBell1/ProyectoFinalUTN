@@ -58,6 +58,15 @@ export const registerController = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(registerConfig.password.value, 10)
+    const validation_token = jsonwebtoken.sign({
+        email: registerConfig.email.value
+    },
+    ENVIROMENT.SECRET_KEY,
+    {
+        expiresIn: '1d'
+    }
+    
+    )
 
     const redirectUrl = `${ENVIROMENT.URL_FRONTEND}/api/auth/verify-email/` + validation_token
 
