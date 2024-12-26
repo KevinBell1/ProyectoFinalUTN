@@ -59,11 +59,14 @@ export const registerController = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(registerConfig.password.value, 10)
 
+    const redirectUrl = `${ENVIROMENT.URL_FRONTEND}/api/auth/verify-email/` + validation_token
+
     const result = await transporterEmail.sendMail({
         subject: 'Valida tu email',
         to: registerConfig.email.value,
         html: `
         <h1>Valida tu mail</h1>
+        <p>Para validar tu mail haz click en <a href= "${redirectUrl}">Este enlace</a></p>
         `
     })
 
@@ -104,3 +107,17 @@ export const registerController = async (req, res) => {
     }
 }
 
+export const verifyEmailController = async (req, res) =>{
+    try{
+        const {validation_token} = req.params
+        const payload = jsonwebtoken.verify(validation_token, ENVIROMENT.SECRET_KEY) // le poasamos el token y la clave, esto verifica si la firma es nuestra y no esta expirado
+        const email_to_verify = payload.email
+        const user_to_verify = await User.findOne({email: email_to_verify})
+        user_to_verify.emailVerified = true
+        await user_to_verify.save()
+        res.json({message: 'Email verificado'})
+        /* redirect, al front end */
+    }catch(error){
+        console.error(error)
+    }
+}

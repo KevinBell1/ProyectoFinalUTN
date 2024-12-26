@@ -1,8 +1,9 @@
 import express from 'express'
 import {registerController} from '../controller/authController.js'
 
-const authRouther = express.Router()
+const authRouter = express.Router()
 
-authRouther.post('/register', registerController)
+authRouter.post('/register', registerController)
+authRouter.get('/verify-email/:validation_token', verifyEmailController)
 
-export default authRouther
+export default authRouter
