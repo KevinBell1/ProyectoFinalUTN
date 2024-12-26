@@ -1,8 +1,10 @@
 import ENVIROMENT from "../config/enviroment.js"
+import transporterEmail from "../helpers/builders/emailTransporter.js"
 import ResponseBuilder from "../helpers/builders/response.builder.js"
 import { verifyEmail, verifyMinLength, verifyString } from "../helpers/validation.helpers.js"
 import User from "../models/user.model.js"
 import bcrypt from 'bcrypt'
+import jsonwebtoken from 'jsonwebtoken'
 
 
 export const registerController = async (req, res) => {
@@ -56,13 +58,21 @@ export const registerController = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(registerConfig.password.value, 10)
-    
+
+    const result = await transporterEmail.sendMail({
+        subject: 'Valida tu email',
+        to: registerConfig.email.value,
+        html: `
+        <h1>Valida tu mail</h1>
+        `
+    })
+
 
     const userCreated = new User({name: registerConfig.name.value , email: registerConfig.email.value, password: hashedPassword, verificationToken: ''}) 
     await userCreated.save()
 
     const response = new ResponseBuilder()
-    .setCode('SUCCES')
+    .setCode('SUCCESS')
     .setOk(true)
     .setStatus(200)
     .setData(
