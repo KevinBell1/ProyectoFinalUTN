@@ -119,12 +119,16 @@ export const registerController = async (req, res) => {
 export const verifyEmailController = async (req, res) =>{
     try{
         const {validation_token} = req.params
-        const payload = jsonwebtoken.verify(validation_token, ENVIROMENT.SECRET_KEY) 
+        console.log('VALIDATION TOKEN',validation_token)
+        const payload = jsonwebtoken.verify(validation_token, ENVIROMENT.SECRET_KEY) // le poasamos el token y la clave, esto verifica si la firma es nuestra y no esta expirado
+        console.log('jsontoken: ',payload)
         const email_to_verify = payload.email
+        console.log('email_to_verify: ',email_to_verify)
         const user_to_verify = await User.findOne({email: email_to_verify})
+        console.log('user_to_verify: ',user_to_verify)
         user_to_verify.emailVerified = true
         await user_to_verify.save()
-        res.json({message: 'Email verificado'})
+        res.redirect('http://localhost:5173/login')
         /* redirect, al front end */
     }catch(error){
         console.error(error)
