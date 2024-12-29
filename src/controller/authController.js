@@ -57,7 +57,7 @@ export const registerController = async (req, res) => {
         return res.json(response)
     }
 
-    const hashedPassword = await bcrypt.hash(registerConfig.password.value, 10)
+    /* const hashedPassword = await bcrypt.hash(registerConfig.password.value, 10)
     const validation_token = jsonwebtoken.sign({
         email: registerConfig.email.value
     },
@@ -66,7 +66,7 @@ export const registerController = async (req, res) => {
         expiresIn: '1d'
     }
     
-    )
+    ) */
 
     const result = await transporterEmail.sendMail({
         subject: 'Valida tu email',
