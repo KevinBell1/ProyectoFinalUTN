@@ -1,11 +1,10 @@
 import ENVIROMENT from "../config/enviroment.js"
-import transporterEmail from "../helpers/builders/emailTransporter.js"
 import ResponseBuilder from "../helpers/builders/response.builder.js"
 import { verifyEmail, verifyMinLength, verifyString } from "../helpers/validation.helpers.js"
 import User from "../models/user.model.js"
-import bcrypt from 'bcrypt'
-import jsonwebtoken from 'jsonwebtoken'
-
+import bcrypt, { compareSync } from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import transporterEmail from '../helpers/builders/emailTransporter.js'
 
 export const registerController = async (req, res) => {
     try{
@@ -58,27 +57,29 @@ export const registerController = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(registerConfig.password.value, 10)
-    const validation_token = jsonwebtoken.sign({
-        email: registerConfig.email.value
-    },
-    ENVIROMENT.SECRET_KEY,
-    {
-        expiresIn: '1d'
-    }
-    
-    )
 
-    const redirectUrl = `${ENVIROMENT.URL_FRONTEND}/api/auth/verify-email/` + validation_token
+    const validation_token = jwt.sign(
+        {
+            email: registerConfig.email.value
+        },
+        ENVIROMENT.SECRET_KEY,
+        {
+            expiresIn: '1d'
+        }
+)
+
+    const redirectURL = `${ENVIROMENT.URL_FRONTEND_VERCEL}/api/auth/verify-email/` + validation_token 
 
     const result = await transporterEmail.sendMail({
+        to: 'bellidos937@gmail.com',
         subject: 'Valida tu email',
-        to: registerConfig.email.value,
-        html: `
-        <h1>Valida tu mail</h1>
-        <p>Para validar tu mail haz click en <a href= "${redirectUrl}">Este enlace</a></p>
+        html: 
+        `<h1>Validar email</h1>
+        <p>Para validar tu email haz click <a href='${redirectURL}'>aqui</a> </p>
         `
     })
 
+    console.log({result})
 
     const userCreated = new User({name: registerConfig.name.value , email: registerConfig.email.value, password: hashedPassword, verificationToken: ''}) 
     await userCreated.save()
@@ -116,21 +117,65 @@ export const registerController = async (req, res) => {
     }
 }
 
-export const verifyEmailController = async (req, res) =>{
+
+export const verifyEmailController = async (req, res) => {
     try{
         const {validation_token} = req.params
-        console.log('VALIDATION TOKEN',validation_token)
-        const payload = jsonwebtoken.verify(validation_token, ENVIROMENT.SECRET_KEY) // le poasamos el token y la clave, esto verifica si la firma es nuestra y no esta expirado
-        console.log('jsontoken: ',payload)
+        const payload = jwt.verify(validation_token, ENVIROMENT.SECRET_KEY)
         const email_to_verify = payload.email
-        console.log('email_to_verify: ',email_to_verify)
         const user_to_verify = await User.findOne({email: email_to_verify})
-        console.log('user_to_verify: ',user_to_verify)
         user_to_verify.emailVerified = true
         await user_to_verify.save()
-        res.redirect('http://localhost:5173/login')
-        /* redirect, al front end */
+        res.sendStatus(200)
+        //redirect front
     }catch(error){
         console.error(error)
     }
 }
+
+export const loginController = async (req, res) => {
+    try{
+        const {email, password} = req.body  
+    const user = await User.findOne({email: email})
+    if(!user){
+        return res.sendStatus(404)
+    }
+    const isCorresctPassword = await bcrypt.compare(password, user.password)
+    if(!isCorresctPassword){
+        return res.status(401).json({message: 'Contraseña incorrecta'})
+    }
+    if(!user.emailVerified){
+        return res.sendStatus(403)
+    }
+    const access_token = jwt.sign(
+        {
+            user_id: user._id,
+            name: user.name,
+            email: user.email
+        },
+        ENVIROMENT.SECRET_KEY,
+        {
+            expiresIn: '1d'
+        }
+        
+    )
+    const response = new ResponseBuilder()
+    .setOk(true)
+    .setCode('LOGGED_SUCESS')
+    .setMessage('Logged Sucess!')
+    .setStatus(200)
+    .setData({
+        access_token: access_token,
+        user_info: {
+            user_id: user.id,
+            name: user.name,
+            email: user.email,
+        }
+    })
+    .build();
+return res.status(200).json(response);
+    }catch(error){
+        console.error(error)
+    }
+}   
+

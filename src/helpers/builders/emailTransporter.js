@@ -1,10 +1,8 @@
-import nodemailer from 'nodemailer'
-import ENVIROMENT from '../../config/enviroment.js'
+import nodemailer from "nodemailer";
+import ENVIROMENT from "../../config/enviroment.js";
 
 
-
-
-const transporterEmail = nodemailer.createTransport({
+const transporterEmaiL = nodemailer.createTransport({
     service: 'gmail',
     auth:{
         user: ENVIROMENT.EMAIL_USER,
@@ -13,4 +11,4 @@ const transporterEmail = nodemailer.createTransport({
 })
 
 
-export default transporterEmail
+export default transporterEmaiL
