@@ -3,6 +3,7 @@ import taskRouther from "./routes/task.route.js";
 import mongoose from "./config/db.config.js";
 import authRouter from "./routes/auth.route.js";
 import cors from "cors";
+import ENVIROMENT from "./config/enviroment.js";
 
 
 const PORT = 3000
