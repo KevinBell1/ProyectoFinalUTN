@@ -10,6 +10,7 @@ const app = express()
 
 const allowedOrigins = [
     'http://localhost:5173',
+    ENVIROMENT.FRONTEND_URL
 ]
 app.use((req, res, nect) => {
     const origin = req.headers.origin
