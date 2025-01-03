@@ -68,7 +68,7 @@ export const registerController = async (req, res) => {
         }
 )
 
-    const redirectURL = `proyecto-final-utn-taupe.vercel.app/api/auth/verify-email/` + validation_token 
+    const redirectURL = `${ENVIROMENT.process.env.URL_FRONTEND}/api/auth/verify-email/` + validation_token 
 
     const result = await transporterEmail.sendMail({
         to: 'bellidos937@gmail.com',
@@ -126,7 +126,7 @@ export const verifyEmailController = async (req, res) => {
         const user_to_verify = await User.findOne({email: email_to_verify})
         user_to_verify.emailVerified = true
         await user_to_verify.save()
-        res.redirect('proyecto-final-utn-frontend-wheat.vercel.app/login')
+        res.redirect(`${ENVIROMENT.process.env.URL_FRONTEND}/login`)
         
     }catch(error){
         console.error(error)
