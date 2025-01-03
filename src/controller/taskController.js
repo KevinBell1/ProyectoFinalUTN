@@ -10,7 +10,7 @@ export const createTaskController = async (req, res) => {
     return res.status(200).json({task})
     }catch(error){
         console.log(error)
-        return res.status(500).json({message: "Error creating task"})
+        return res.status(500).json({message: "Error creating task", error})
     }
 }
 
@@ -28,15 +28,12 @@ export const obtenerTaskController = async (req, res) => {
 export const deleteTaskController = async (req, res) => {
     try{
         const {task_id} = req.params
-        console.log(task_id)
         if (!task_id) {
-            console.log('primer if')
             return res.status(404).json({ message: "No se ha encontrado el id del producto" })
             
         }
     const task = await taskRepository.deleteTask(task_id)
     if (task) {
-        console.log('segundo if')
         return res.status(200).json({ message: 'Producto eliminado correctamente' })
         
     } else {

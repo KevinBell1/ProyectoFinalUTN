@@ -68,7 +68,7 @@ export const registerController = async (req, res) => {
         }
 )
 
-    const redirectURL = `${ENVIROMENT.process.env.URL_FRONTEND}/api/auth/verify-email/` + validation_token 
+    const redirectURL = `${ENVIROMENT.FRONTEND_URL}/api/auth/verify-email/` + validation_token 
 
     const result = await transporterEmail.sendMail({
         to: 'bellidos937@gmail.com',
@@ -121,12 +121,13 @@ export const registerController = async (req, res) => {
 export const verifyEmailController = async (req, res) => {
     try{
         const {validation_token} = req.params
+        console.log( 'validacion token',validation_token)
         const payload = jwt.verify(validation_token, ENVIROMENT.SECRET_KEY)
         const email_to_verify = payload.email
         const user_to_verify = await User.findOne({email: email_to_verify})
         user_to_verify.emailVerified = true
         await user_to_verify.save()
-        res.redirect(`${ENVIROMENT.process.env.URL_FRONTEND}/login`)
+        res.redirect(`http://localhost:5173/login`)
         
     }catch(error){
         console.error(error)
