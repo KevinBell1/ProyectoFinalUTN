@@ -68,7 +68,7 @@ export const registerController = async (req, res) => {
         }
 )
 
-    const redirectURL = `http://localhost:3000/api/auth/verify-email/` + validation_token 
+    const redirectURL = `proyecto-final-utn-taupe.vercel.app/api/auth/verify-email/` + validation_token 
 
     const result = await transporterEmail.sendMail({
         to: 'bellidos937@gmail.com',
