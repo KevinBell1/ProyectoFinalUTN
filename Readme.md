@@ -4,3 +4,4 @@ Librerias:
 3. bcrypt
 4. nodemailer
 5. jsonwebtoken
+6. cors
