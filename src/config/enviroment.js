@@ -10,7 +10,7 @@ const ENVIROMENT = {
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
     EMAIL_USER: process.env.EMAIL_USER,
     FRONTEND_URL: process.env.FRONTEND_URL,
-    URL_FRONTEND_VERCEL: process.env.URL_FRONTEND_VERCEL,
+    BACKEND_URL :process.env.BACKEND_URL,
     SECRET_KEY : process.env.SECRET_KEY,
 }
 
