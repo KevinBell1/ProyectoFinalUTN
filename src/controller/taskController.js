@@ -1,16 +1,35 @@
+import { errorHandler } from "../../middleware/errorHandlerMiddelware.js"
 import taskRepository from "../repositories/task.repository.js"
 
 
 export const createTaskController = async (req, res) => {
+
+        const {task} = req.body
+
+    if(!task) {
+        return res.status(400).json({
+        ok: false,
+        code: 'INVALID_TASK',
+        message: 'El dato de la tarea es requerido',
+    })
+}
     try{
-        const new_task = req.body
-    if(!new_task) {return res.status(400).json({message: "Task data is required"})}
-    console.log(new_task)
-    const task = await taskRepository.createTask(new_task)
-    return res.status(200).json({task})
-    }catch(error){
-        console.log(error)
-        return res.status(500).json({message: "Error creating task", error})
+    const newTask = await taskRepository.createTask(task)
+    return res.status(201).json(newTask)
+    }catch (error) {
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                ok: false,
+                code: 'DB_VALIDATION_ERROR',
+                message: 'Error de validación en la base de datos',
+                details: error.message,
+            });
+        }
+        return res.status(500).json({
+            ok: false,
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Error al crear la tarea',
+        })
     }
 }
 
@@ -19,8 +38,8 @@ export const obtenerTaskController = async (req, res) => {
         const {user_id} = req.params
         const tasksList = await taskRepository.obtenerTasks(user_id)
         res.status(200).json(tasksList)
-    }catch(error){
-        res.status(500).json({message: error})
+    }catch (error) {
+        errorHandler(res, error, 'Error al obtener tareas');
     }
     
 }
@@ -39,8 +58,8 @@ export const deleteTaskController = async (req, res) => {
     } else {
         return res.status(404).json({ message: 'No se ha encontrado el producto' })
     }
-    }catch(error){
-        res.status(500).json({message: error})
+    }catch (error) {
+        errorHandler(res, error, 'Error al eliminar tarea');
     }
 
 }
@@ -58,7 +77,7 @@ export const updateTaskController = async (req, res) => {
     } else {
         return res.status(404).json({ message: 'No se ha encontrado el producto' })
     }
-    }catch(error){
-        res.status(500).json({message: error})
+    }catch (error) {
+        errorHandler(res, error, 'Error al actualizar tarea');
     }
 }
