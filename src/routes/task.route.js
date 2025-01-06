@@ -6,5 +6,5 @@ const taskRouther = express.Router();
 taskRouther.post('/', createTaskController)
 taskRouther.get('/:user_id', obtenerTaskController)
 taskRouther.delete('/:task_id', deleteTaskController)
-taskRouther.post('/:task_id', updateTaskController)
+taskRouther.put('/:task_id', updateTaskController)
 export default taskRouther

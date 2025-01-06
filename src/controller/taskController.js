@@ -14,9 +14,14 @@ export const createTaskController = async (req, res) => {
     })
 }
     try{
-    const newTask = await taskRepository.createTask(task)
-    return res.status(201).json(newTask)
+    const newTask = await taskRepository.createTask({task})
+    return res.status(201).json({
+        task: newTask.task,  
+        active: newTask.active, 
+        _id: newTask._id,  // devuelve el _id para el frontend, IMPORTANTE
+    })
     }catch (error) {
+        console.error(error)
         if (error.name === 'ValidationError') {
             return res.status(400).json({
                 ok: false,
@@ -28,7 +33,7 @@ export const createTaskController = async (req, res) => {
         return res.status(500).json({
             ok: false,
             code: 'INTERNAL_SERVER_ERROR',
-            message: 'Error al crear la tarea',
+            message: 'Error al crear la tarea', error
         })
     }
 }
@@ -67,9 +72,11 @@ export const deleteTaskController = async (req, res) => {
 export const updateTaskController = async (req, res) => {
     const {task_id} = req.params
     const {task_data} = req.body
+    console.log('task_id recibido:', task_id);  // Verificamos el task_id recibido
+    console.log('task_data recibido:', task_data);  // Verificamos task_data recibido
     try{
         if (!task_id) {
-            return res.status(404).json({ message: "No se ha encontrado el  producto" })
+            return res.status(404).json({ message: 'ID de tarea o datos incompletos' })
         }
     const task = await taskRepository.updateTask(task_id, task_data)
     if (task) {
