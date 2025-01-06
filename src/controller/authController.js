@@ -78,7 +78,7 @@ export const registerController = async (req, res) => {
         const redirectURL = `${ENVIROMENT.FRONTEND_URL}/api/auth/verify-email/` + validation_token
 
         const result = await transporterEmail.sendMail({
-            to: 'bellidos937@gmail.com',
+            to: '${registerConfig.email.value}',	
             subject: 'Valida tu email',
             html:
                 `<h1>Validar email</h1>
