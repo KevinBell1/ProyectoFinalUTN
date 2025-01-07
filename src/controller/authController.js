@@ -12,6 +12,16 @@ import { errorHandler } from "../../middleware/errorHandlerMiddelware.js"
 export const registerController = async (req, res) => {
     try {
         const { name, email, password } = req.body
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            const response = new ResponseBuilder()
+                .setOk(false)
+                .setStatus(400)
+                .setCode("EMAIL_ALREADY_REGISTERED")
+                .setMessage("El correo electrónico ya está registrado.")
+                .build();
+            return res.status(400).json(response);
+        }
         const registerConfig = {
             name: {
                 value: name,
