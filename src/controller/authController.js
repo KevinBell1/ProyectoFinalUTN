@@ -122,7 +122,7 @@ export const verifyEmailController = async (req, res) => {
         const user_to_verify = await User.findOne({ email: email_to_verify })
         user_to_verify.emailVerified = true
         await user_to_verify.save()
-        res.redirect(`http://localhost:5173/login`)
+        res.redirect(`https://proyecto-final-utn-frontend-wheat.vercel.app/login`)
 
     } catch (error) {
         errorHandler(res, error, 'Error al verificar usuario');
